@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relatório - Testes com GenieACS</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #121212;
+      color: #e0e0e0;
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+    }
+    header {
+      background-color: #1f1f1f;
+      padding: 20px;
+      text-align: center;
+      border-bottom: 2px solid #333;
+    }
+    header h1 {
+      margin: 0;
+      color: #00ffcc;
+    }
+    .content {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+    section {
+      margin-bottom: 40px;
+    }
+    h2 {
+      color: #00ffd5;
+      border-bottom: 1px solid #333;
+      padding-bottom: 5px;
+    }
+    p {
+      margin-bottom: 10px;
+    }
+    ul {
+      margin: 10px 0 20px 20px;
+      padding-left: 20px;
+    }
+    li {
+      margin-bottom: 8px;
+    }
+    code {
+      background-color: #1e1e1e;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #ffcc00;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Relatório de Testes com GenieACS</h1>
+  </header>
+  <div class="content">
+    <section>
+      <h2>Resumo Geral</h2>
+      <p>Três dispositivos foram testados no ambiente GenieACS:</p>
+      <ul>
+        <li>ZTE ONT</li>
+        <li>Greatek V1</li>
+        <li>Greatek V2</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Interface Web (:3000)</h2>
+      <p>Todos os dispositivos são exibidos como online, mas apresentam falhas ao interagir pela interface web:</p>
+      <ul>
+        <li><strong>Greatek</strong>: ao tentar realizar alterações, o sistema exibe <code>Device is offline</code>.</li>
+        <li><strong>ZTE ONT</strong>: apresenta erros de parâmetros ao tentar alterar configurações.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Via API (:7557)</h2>
+      <p>Mesmo com erros similares, após reiniciar os dispositivos, as tarefas são aplicadas corretamente.</p>
+    </section>
+
+    <section>
+      <h2>ZTE ONT</h2>
+      <ul>
+        <li>Muito instável com ajustes de configurações.</li>
+        <li>Pouco flexível.</li>
+        <li>Diferenças principais: <code>wlan1</code> (2.4GHz) e <code>wlan5</code> (5.8GHz).</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Greatek V2</h2>
+      <p>Apresenta instabilidade semelhante ao ZTE. Exemplo de comportamento durante testes:</p>
+      <ul>
+        <li>API chamada para renomear SSID e alterar senha.</li>
+        <li>API chamada para reinício do dispositivo (sem efeito imediato).</li>
+        <li>API usada para mudar o canal e novo reboot (sem efeito).</li>
+        <li>API usada para forçar captura de parâmetros (sem efeito).</li>
+        <li>Tasks permaneciam na fila.</li>
+        <li>Ao reiniciar manualmente, todas as tasks foram executadas em sequência.</li>
+      </ul>
+      <p>Conclusão: execução da fila é extremamente lenta ou dependente de reboot manual.</p>
+    </section>
+
+    <section>
+      <h2>Greatek V1</h2>
+      <ul>
+        <li>Melhor desempenho entre os testados.</li>
+        <li>Alterar SSID e senha via API seguido de reboot funciona conforme esperado.</li>
+        <li>Interface Web também funciona bem com os parâmetros sendo atualizados automaticamente após reboot.</li>
+      </ul>
+    </section>
+  </div>
+</body>
+</html>
