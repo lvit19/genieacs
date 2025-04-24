@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Documentação GenieACS - Análise Completa</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .copy-btn {
+      background: #00ff99;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 12px;
+      cursor: pointer;
+      margin-left: 10px;
+      transition: all 0.3s;
+    }
+    .copy-btn:hover {
+      background: #e0e0e0;
+    }
+    .code-container {
+      position: relative;
+    }
+    .code-container pre {
+      background: #191919;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    .code-container .copy-btn {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+    }
+    a.external-link {
+      color: #06c;
+      text-decoration: none;
+    }
+    a.external-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <h2>Documentação</h2>
+      <nav>
+        <ul>
+          <li><a href="#introducao">Introdução</a></li>
+          <li><a href="#ambiente">Ambiente de Testes</a></li>
+          <li><a href="#endpoints">Endpoints API</a></li>
+          <li><a href="#comportamento-web">Comportamento Web</a></li>
+          <li><a href="#comportamento-api">Comportamento API</a></li>
+          <li><a href="#analise-dispositivos">Análise por Dispositivo</a></li>
+          <li><a href="#conclusoes">Conclusões</a></li>
+        </ul>
+      </nav>
+    </aside>
+    
+    <main class="content">
+      <section id="introducao">
+        <h1>Introdução</h1>
+        <p>Esta documentação cobre a API de gerenciamento TR-069 e a análise detalhada do comportamento de diferentes dispositivos CPE com o GenieACS.</p>
+      </section>
+
+      <section id="ambiente">
+        <h1>🔧 Ambiente de Testes</h1>
+        <ul>
+          <li><strong>Interface Web:</strong> <a href="http://192.168.2.232:3000/" class="external-link" target="_blank">Porta 3000</a></li>
+          <li><strong>API:</strong> Porta 7557</li>
+          <li><strong>Configuração:</strong> Porta 7547</li>
+          <li><strong>Dispositivos testados:</strong> ZTE, Greatek v1, Greatek v2</li>
+        </ul>
+      </section>
+
+      <section id="endpoints">
+        <h1>📡 Endpoints da API</h1>
+        
+        <article class="endpoint">
+          <h2>POST /devices/&lt;device-id&gt;/tasks?timeout=3000&connection_request</h2>
+          <div class="code-container">
+            <pre><code id="code1">{
+  "name": "reboot"
+}</code></pre>
+            <button class="copy-btn" onclick="copyToClipboard('code1')">Copiar</button>
+          </div>
+          <p><strong>Função:</strong> Reinicia o equipamento</p>
+        </article>
+        
+        <article class="endpoint">
+          <h2>GET /devices</h2>
+          <p><strong>Corpo:</strong> Nenhum</p>
+          <p><strong>Função:</strong> Lista todos os dispositivos e seus parâmetros</p>
+        </article>
+        
+        <article class="endpoint">
+          <h2>POST /devices/&lt;device-id&gt;/tasks?connection_request</h2>
+          <div class="code-container">
+            <pre><code id="code2">{
+  "name": "getParameterValues",
+  "parameterNames": [
+    "InternetGatewayDevice"
+  ]
+}</code></pre>
+            <button class="copy-btn" onclick="copyToClipboard('code2')">Copiar</button>
+          </div>
+          <p><strong>Função:</strong> Força a captura dos parâmetros do dispositivo</p>
+        </article>
+        
+        <article class="endpoint">
+          <h2>POST /devices/&lt;device-id&gt;/tasks?connection_request</h2>
+          <div class="code-container">
+            <pre><code id="code3">{
+  "name": "setParameterValues",
+  "parameterValues": [
+    ["InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.SSID", "Grealeevit 5G - API", "xsd:string"],
+    ["InternetGatewayDevice.LANDevice.1.WLANConfiguration.2.SSID", "Grealeevit 2.4G - API", "xsd:string"],
+    ["InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.PreSharedKey.1.PreSharedKey", "levit1906", "xsd:string"],
+    ["InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.PreSharedKey.2.PreSharedKey", "levit1906", "xsd:string"]
+  ]
+}</code></pre>
+            <button class="copy-btn" onclick="copyToClipboard('code3')">Copiar</button>
+          </div>
+          <p><strong>Função:</strong> Define o valor de um parâmetro específico</p>
+        </article>
+        
+        <article class="endpoint">
+          <h2>GET /tasks</h2>
+          <p><strong>Corpo:</strong> Nenhum</p>
+          <p><strong>Função:</strong> Lista todas as tasks em execução</p>
+        </article>
+        
+        <article class="endpoint">
+          <h2>DELETE /tasks/&lt;task-id&gt;</h2>
+          <p><strong>Corpo:</strong> Nenhum</p>
+          <p><strong>Função:</strong> Remove uma task específica</p>
+        </article>
+      </section>
+
+      <section id="comportamento-web">
+        <h1>🌐 Comportamento da Interface Web</h1>
+        <ul>
+          <li>Exibe dispositivos como "online", mas operações frequentemente falham</li>
+          <li><strong>Greatek:</strong> Ao tentar alterar parâmetros, a interface retorna "Device is offline"</li>
+          <li><strong>ZTE:</strong> Apresenta diversos erros de parâmetros ao interagir com a interface</li>
+        </ul>
+      </section>
+
+      <section id="comportamento-api">
+        <h1>🧪 Comportamento via API</h1>
+        <ul>
+          <li>A comunicação apresenta os mesmos erros da interface web, porém:</li>
+          <li>Após reiniciar o dispositivo, as tarefas em fila são aplicadas</li>
+          <li>Últimos testes concluiram até 1min para reboot API</li>
+          <li>Mais confiável que a interface web para execução de comandos</li>
+        </ul>
+      </section>
+
+      <section id="analise-dispositivos">
+        <h1>📶 Análise por Dispositivo</h1>
+        
+        <article class="device">
+          <h2>ZTE ONT</h2>
+          <ul>
+            <li>Muito instável</li>
+            <li>Pouco flexível em relação a comandos remotos</li>
+            <li>Configuração WLAN:
+              <ul>
+                <li>WLAN 1: 2.4GHz</li>
+                <li>WLAN 5: 5.8GHz</li>
+              </ul>
+            </li>
+          </ul>
+        </article>
+        
+        <article class="device">
+          <h2>Greatek v2</h2>
+          <ul>
+            <li>Instabilidade notável</li>
+            <li>Configuração WLAN:
+              <ul>
+                <li>WLAN 1: 5.8GHz</li>
+                <li>WLAN 2: 2.4GHz</li>
+              </ul>
+            </li>
+            <li><strong>Testes realizados:</strong>
+              <ol>
+                <li>API usada para renomear SSID e alterar senha</li>
+                <li>Reinício via API</li>
+                <li>Alteração de canal</li>
+              </ol>
+            </li>
+            <li><strong>Resultados:</strong>
+              <ul>
+                <li>Após reboot:
+                  <ul>
+                    <li>SSID e senha alterados</li>
+                    <li>Canal alterado automaticamente</li>
+                  </ul>
+                </li>
+                <li>Senha não alterada via presharedkey, somente com: "InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.PreSharedKey.1.KeyPassphrase"</li>
+              </ul>
+            </li>
+            <li><strong>Conclusão:</strong> Fila de tarefas respeitada apenas após reboot</li> </ul> </article> </section>
+			  <section id="conclusoes">
+    <h1>📝 Conclusões</h1>
+    <ul>
+      <li>Comportamento da interface web precisa de melhorias, como a aplicação dos parâmetros de forma mais confiável.</li>
+      <li>A API tem mostrado mais estabilidade, principalmente após a execução do comando de reinício do dispositivo.</li>
+      <li>Dispositivos Greatek estão com melhores respostas para tarefas via API.</li>
+    </ul>
+  </section>
+</main>
+
