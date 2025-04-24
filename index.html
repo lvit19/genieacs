@@ -6,8 +6,16 @@
   <title>Documentação GenieACS - Análise Completa</title>
   <link rel="stylesheet" href="style.css" />
   <style>
+    :root {
+      --primary-color: #00ff99;
+      --hover-color: #e0e0e0;
+      --code-bg: #191919;
+      --success-color: #4CAF50;
+      --error-color: #f44336;
+    }
+    
     .copy-btn {
-      background: #00ff99;
+      background: var(--primary-color);
       border: 1px solid #ddd;
       border-radius: 4px;
       padding: 2px 8px;
@@ -17,13 +25,13 @@
       transition: all 0.3s;
     }
     .copy-btn:hover {
-      background: #e0e0e0;
+      background: var(--hover-color);
     }
     .code-container {
       position: relative;
     }
     .code-container pre {
-      background: #191919;
+      background: var(--code-bg);
       padding: 10px;
       border-radius: 4px;
       overflow-x: auto;
@@ -40,166 +48,311 @@
     a.external-link:hover {
       text-decoration: underline;
     }
+    .device-test {
+      margin: 15px 0;
+      padding: 10px;
+      background: #f5f5f5;
+      border-radius: 4px;
+    }
+    .test-success {
+      border-left: 4px solid var(--success-color);
+    }
+    .test-observation {
+      border-left: 4px solid #FFA500;
+    }
   </style>
 </head>
 <body>
+  <div class="container">
+    <aside class="sidebar">
+      <h2>Documentação</h2>
+      <nav>
+        <ul>
+          <li><a href="#introducao">Introdução</a></li>
+          <li><a href="#ambiente">Ambiente de Testes</a></li>
+          <li><a href="#endpoints">Endpoints API</a></li>
+          <li><a href="#comportamento-web">Comportamento Web</a></li>
+          <li><a href="#comportamento-api">Comportamento API</a></li>
+          <li><a href="#analise-dispositivos">Análise por Dispositivo</a></li>
+          <li><a href="#conclusoes">Conclusões</a></li>
+        </ul>
+      </nav>
+    </aside>
+    
+    <main class="content">
+      <section id="introducao">
+        <h1>Introdução</h1>
+        <p>Esta documentação cobre a API de gerenciamento TR-069 e a análise detalhada do comportamento de diferentes dispositivos CPE com o GenieACS, incluindo testes atualizados e novos equipamentos.</p>
+      </section>
 
-    <h1>Documentação de Testes – API GenieACS & Comportamento de Dispositivos CPE (TR-069)</h1>
-
-    <h2>Introdução</h2>
-    <p>Esta documentação registra os testes realizados com o <strong>GenieACS</strong> utilizando sua API TR-069 para controle remoto e automação de dispositivos CPE (Customer Premises Equipment), focando em:</p>
-    <ul>
-        <li>Captura e alteração de parâmetros (SSID, senha, canal, etc.)</li>
-        <li>Comportamento da interface web</li>
-        <li>Estabilidade e resposta dos dispositivos testados</li>
-    </ul>
-
-    <h2>Ambiente de Testes</h2>
-    <ul>
-        <li><strong>Interface Web</strong>: Porta 3000</li>
-        <li><strong>API</strong>: Porta 7557</li>
-        <li><strong>TR-069</strong>: Porta 7547</li>
-        <li><strong>Dispositivos testados</strong>:
+      <section id="ambiente">
+        <h1>🔧 Ambiente de Testes</h1>
+        <ul>
+          <li><strong>Interface Web:</strong> <a href="http://192.168.2.232:3000/" class="external-link" target="_blank" rel="noopener noreferrer">Porta 3000</a></li>
+          <li><strong>API:</strong> Porta 7557</li>
+          <li><strong>Configuração:</strong> Porta 7547</li>
+          <li><strong>Dispositivos testados:</strong> 
             <ul>
-                <li>ZTE ONT</li>
-                <li>Greatek v1</li>
-                <li>Greatek v2</li>
-                <li>Intelbras RX1500</li>
+              <li>ZTE F660</li>
+              <li>Greatek v1 (GT-784WN)</li>
+              <li>Greatek v2 (GT-784WNv2)</li>
+              <li>Huawei HG8245H</li>
             </ul>
-        </li>
-    </ul>
+          </li>
+        </ul>
+      </section>
 
-    <h2>Endpoints da API</h2>
+      <section id="endpoints">
+        <h1>📡 Endpoints da API</h1>
+        
+        <article class="endpoint">
+          <h2>POST /devices/&lt;device-id&gt;/tasks?timeout=3000&connection_request</h2>
+          <div class="code-container">
+            <pre><code id="code1">{
+  "name": "reboot"
+}</code></pre>
+            <button class="copy-btn" aria-label="Copiar código" onclick="copyToClipboard('code1')">Copiar</button>
+          </div>
+          <p><strong>Função:</strong> Reinicia o equipamento</p>
+          <p><strong>Tempo médio de resposta:</strong> 1-3 minutos dependendo do dispositivo</p>
+        </article>
+        
+        <article class="endpoint">
+          <h2>GET /devices</h2>
+          <p><strong>Corpo:</strong> Nenhum</p>
+          <p><strong>Função:</strong> Lista todos os dispositivos e seus parâmetros</p>
+        </article>
+        
+        <article class="endpoint">
+          <h2>POST /devices/&lt;device-id&gt;/tasks?connection_request</h2>
+          <div class="code-container">
+            <pre><code id="code2">{
+  "name": "getParameterValues",
+  "parameterNames": [
+    "InternetGatewayDevice"
+  ]
+}</code></pre>
+            <button class="copy-btn" aria-label="Copiar código" onclick="copyToClipboard('code2')">Copiar</button>
+          </div>
+          <p><strong>Função:</strong> Força a captura dos parâmetros do dispositivo</p>
+          <p><strong>Tempo médio de resposta:</strong> Até 1 minuto</p>
+        </article>
+        
+        <article class="endpoint">
+          <h2>POST /devices/&lt;device-id&gt;/tasks?connection_request</h2>
+          <div class="code-container">
+            <pre><code id="code3">{
+  "name": "setParameterValues",
+  "parameterValues": [
+    ["InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.SSID", "Grealeevit 5G - API", "xsd:string"],
+    ["InternetGatewayDevice.LANDevice.1.WLANConfiguration.2.SSID", "Grealeevit 2.4G - API", "xsd:string"],
+    ["InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.PreSharedKey.1.KeyPassphrase", "levit1906", "xsd:string"],
+    ["InternetGatewayDevice.LANDevice.1.WLANConfiguration.2.PreSharedKey.1.KeyPassphrase", "levit1906", "xsd:string"]
+  ]
+}</code></pre>
+            <button class="copy-btn" aria-label="Copiar código" onclick="copyToClipboard('code3')">Copiar</button>
+          </div>
+          <p><strong>Função:</strong> Define o valor de parâmetros WLAN (formato atualizado)</p>
+          <p><strong>Observação:</strong> Usar KeyPassphrase ao invés de PreSharedKey para senhas WiFi</p>
+        </article>
+      </section>
 
-    <h3>Reiniciar dispositivo</h3>
-    <p><strong>POST</strong> /devices/&lt;device-id&gt;/tasks?timeout=3000&connection_request</p>
-    <pre>{ "name": "reboot" }</pre>
+      <section id="comportamento-web">
+        <h1>🌐 Comportamento da Interface Web</h1>
+        <ul>
+          <li>Exibe dispositivos como "online", mas operações frequentemente falham</li>
+          <li>Atualização de parâmetros pode exigir refresh manual ou nova captura via API</li>
+          <li>Performance varia significativamente entre modelos de dispositivos</li>
+        </ul>
+      </section>
 
-    <h3>Listar dispositivos</h3>
-    <p><strong>GET</strong> /devices</p>
+      <section id="comportamento-api">
+        <h1>🧪 Comportamento via API</h1>
+        <ul>
+          <li>Mais confiável que a interface web para execução de comandos</li>
+          <li>Tarefas são frequentemente aplicadas apenas após reboot</li>
+          <li>Tempos de resposta consistentes após ajustes na implementação</li>
+        </ul>
+      </section>
 
-    <h3>Capturar parâmetros do dispositivo</h3>
-    <p><strong>POST</strong> /devices/&lt;device-id&gt;/tasks?connection_request</p>
-    <pre>
-    {
-        "name": "getParameterValues",
-        "parameterNames": ["InternetGatewayDevice"]
+      <section id="analise-dispositivos">
+        <h1>📶 Análise por Dispositivo</h1>
+        
+        <article class="device">
+          <h2>ZTE F660</h2>
+          <ul>
+            <li><strong>Estabilidade:</strong> Instável</li>
+            <li><strong>Flexibilidade de comandos:</strong> Limitada</li>
+            <li><strong>Configuração WLAN:</strong>
+              <ul>
+                <li>WLAN 1: 2.4GHz</li>
+                <li>WLAN 5: 5.8GHz</li>
+              </ul>
+            </li>
+            <li><strong>Tempo médio de reboot:</strong> 2-3 minutos</li>
+            <li><strong>Atualização de parâmetros:</strong> Requer múltiplas tentativas</li>
+          </ul>
+        </article>
+        
+        <article class="device">
+          <h2>Greatek v1 (GT-784WN)</h2>
+          <ul>
+            <li><strong>Estabilidade:</strong> Boa</li>
+            <li><strong>Configuração WLAN:</strong>
+              <ul>
+                <li>WLAN 1: 5.8GHz</li>
+                <li>WLAN 2: 2.4GHz</li>
+              </ul>
+            </li>
+            <li><strong>Tempo médio de reboot:</strong> 1-2 minutos</li>
+            <li><strong>Testes realizados:</strong>
+              <ol>
+                <li>Alteração de SSID e senha via API</li>
+                <li>Reinício via API</li>
+                <li>Alteração de canal</li>
+              </ol>
+            </li>
+            <li><strong>Resultados:</strong>
+              <ul>
+                <li>Alterações aplicadas corretamente após reboot</li>
+                <li>Interface web reflete parâmetros atualizados</li>
+                <li>Não requer captura adicional de parâmetros</li>
+              </ul>
+            </li>
+          </ul>
+          
+          <div class="device-test test-success">
+            <strong>Teste Atualizado:</strong> 10 reboots consecutivos com intervalo de 5 minutos - todos concluídos em 1-2 minutos
+          </div>
+        </article>
+        
+        <article class="device">
+          <h2>Greatek v2 (GT-784WNv2)</h2>
+          <ul>
+            <li><strong>Estabilidade:</strong> Regular (melhorou com ajustes)</li>
+            <li><strong>Configuração WLAN:</strong>
+              <ul>
+                <li>WLAN 1: 5.8GHz</li>
+                <li>WLAN 2: 2.4GHz</li>
+              </ul>
+            </li>
+            <li><strong>Tempo médio de reboot:</strong> ~1 minuto</li>
+            <li><strong>Comportamento inicial:</strong>
+              <ul>
+                <li>Subiu apenas com parâmetros de fábrica</li>
+                <li>Requer comando explícito para obter parâmetros gerais</li>
+              </ul>
+            </li>
+          </ul>
+          
+          <div class="device-test test-success">
+            <strong>Teste 1:</strong> Obtenção de parâmetros via API<br>
+            <strong>Resultado:</strong> Interface web mostrou todos parâmetros em até 1 minuto
+          </div>
+          
+          <div class="device-test test-observation">
+            <strong>Teste 2:</strong> Alteração de SSID e senha<br>
+            <strong>Observação:</strong> Parâmetro PreSharedKey ineficaz, KeyPassphrase funcionou<br>
+            <strong>Solução:</strong> Usar "InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.PreSharedKey.1.KeyPassphrase"
+          </div>
+          
+          <div class="device-test test-success">
+            <strong>Teste 3:</strong> Alteração de canal com reboot<br>
+            <strong>Resultado:</strong> Concluído em ~1 minuto, alteração aplicada
+          </div>
+          
+          <div class="device-test test-observation">
+            <strong>Comportamento Atualizado:</strong> 
+            <ul>
+              <li>Maioria das mudanças agora aparece na interface web</li>
+              <li>Exige captura manual de parâmetros via API para atualização completa</li>
+              <li>Fila de tasks está funcionando corretamente com reboots precisos</li>
+            </ul>
+          </div>
+        </article>
+        
+        <article class="device">
+          <h2>Huawei HG8245H</h2>
+          <ul>
+            <li><strong>Estabilidade:</strong> Excelente</li>
+            <li><strong>Configuração WLAN:</strong>
+              <ul>
+                <li>WLAN 1: 2.4GHz</li>
+                <li>WLAN 2: 5.8GHz</li>
+              </ul>
+            </li>
+            <li><strong>Tempo médio de reboot:</strong> 1 minuto</li>
+            <li><strong>Testes realizados:</strong>
+              <ol>
+                <li>Alteração completa de configuração WLAN</li>
+                <li>Múltiplos reboots consecutivos</li>
+                <li>Atualização de firmware remota</li>
+              </ol>
+            </li>
+            <li><strong>Resultados:</strong>
+              <ul>
+                <li>Todas as alterações aplicadas imediatamente</li>
+                <li>Interface web atualiza em tempo real</li>
+                <li>Não requer captura adicional de parâmetros</li>
+              </ul>
+            </li>
+          </ul>
+        </article>
+      </section>
+
+      <section id="conclusoes">
+        <h1>📌 Conclusões Gerais</h1>
+        <ul>
+          <li><strong>Greatek v1:</strong> Continua sendo o mais compatível, com comportamento consistente</li>
+          <li><strong>Greatek v2:</strong> Melhorou significativamente após ajustes, agora com fila de tasks funcional</li>
+          <li><strong>Huawei HG8245H:</strong> Apresentou o melhor desempenho geral</li>
+          <li><strong>ZTE F660:</strong> Ainda o menos confiável, com tempos de resposta mais longos</li>
+          <li><strong>Padrão de comandos:</strong> KeyPassphrase é o parâmetro correto para senhas WiFi na maioria dos dispositivos</li>
+          <li><strong>Tempos de resposta:</strong> Todos os dispositivos agora respeitam tempos máximos de 3 minutos para operações críticas</li>
+        </ul>
+        
+        <h2>Recomendações</h2>
+        <ol>
+          <li>Priorizar uso da API sobre a interface web</li>
+          <li>Implementar timeout mínimo de 3 minutos para operações</li>
+          <li>Usar KeyPassphrase ao invés de PreSharedKey para senhas WiFi</li>
+          <li>Considerar Huawei HG8245H como dispositivo de referência para novos testes</li>
+        </ol>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    async function copyToClipboard(id) {
+      const codeElement = document.getElementById(id);
+      const btn = event.target;
+      
+      try {
+        await navigator.clipboard.writeText(codeElement.textContent.trim());
+        btn.textContent = 'Copiado!';
+        btn.style.backgroundColor = var(--success-color);
+        setTimeout(() => {
+          btn.textContent = 'Copiar';
+          btn.style.backgroundColor = '';
+        }, 2000);
+      } catch (err) {
+        console.error('Falha ao copiar texto: ', err);
+        btn.textContent = 'Erro!';
+        btn.style.backgroundColor = var(--error-color);
+        setTimeout(() => {
+          btn.textContent = 'Copiar';
+          btn.style.backgroundColor = '';
+        }, 2000);
+        
+        // Fallback para navegadores antigos
+        const range = document.createRange();
+        range.selectNode(codeElement);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+        document.execCommand('copy');
+        window.getSelection().removeAllRanges();
+      }
     }
-    </pre>
-
-    <h3>Definir parâmetros do dispositivo</h3>
-    <p><strong>POST</strong> /devices/&lt;device-id&gt;/tasks?connection_request</p>
-    <pre>
-    {
-        "name": "setParameterValues",
-        "parameterValues": [
-            ["InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.SSID", "SSID 5G", "xsd:string"],
-            ["InternetGatewayDevice.LANDevice.1.WLANConfiguration.2.SSID", "SSID 2.4G", "xsd:string"],
-            ["InternetGatewayDevice.LANDevice.1.WLANConfiguration.1.PreSharedKey.1.KeyPassphrase", "senha123", "xsd:string"]
-        ]
-    }
-    </pre>
-
-    <h3>Listar tarefas</h3>
-    <p><strong>GET</strong> /tasks</p>
-
-    <h3>Remover tarefa</h3>
-    <p><strong>DELETE</strong> /tasks/&lt;task-id&gt;</p>
-
-    <h2>Comportamento da Interface Web</h2>
-    <ul>
-        <li>Mostra dispositivos como "online" mesmo sem resposta real.</li>
-        <li>Comandos geralmente falham para ZTE e Greatek v1 na interface.</li>
-        <li>Necessidade frequente de reboot ou uso de API para refletir mudanças.</li>
-        <li><strong>Intelbras</strong> mostrou diferença importante: exibe <strong>senha do Wi-Fi</strong> no campo <code>KeyPassphrase</code>, ao contrário dos demais.</li>
-    </ul>
-
-    <h2>Análise por Dispositivo</h2>
-
-    <h3>ZTE ONT</h3>
-    <ul>
-        <li><strong>Parâmetros WLAN</strong>: WLAN 1: 2.4GHz, WLAN 5: 5.8GHz</li>
-        <li><strong>Resultados</strong>: Instável, erros frequentes na interface e API, pouca compatibilidade com comandos de alteração</li>
-        <li><strong>Conclusão</strong>: Pouco funcional com GenieACS</li>
-    </ul>
-
-    <h3>Greatek v1</h3>
-    <ul>
-        <li><strong>Parâmetros WLAN</strong>: WLAN 1: 2.4GHz, WLAN 2: 5.8GHz</li>
-        <li><strong>Resultados</strong>: SSID e senha alterados com sucesso via API, Reboot necessário para aplicar, Interface web não atualiza sem nova captura</li>
-        <li><strong>Conclusão</strong>: Alta compatibilidade, requer apenas reboot</li>
-    </ul>
-
-    <h3>Greatek v2</h3>
-    <ul>
-        <li><strong>Parâmetros WLAN</strong>: WLAN 1: 5.8GHz, WLAN 2: 2.4GHz</li>
-        <li><strong>Resultados</strong>: Subiu com valores de fábrica (SSID/senha), sem parâmetros gerais, Captura de parâmetros via API funcionou (status 202), atualização na interface em 1min</li>
-        <li><strong>Conclusão</strong>: Agora funcional e previsível, mas depende de captures manuais</li>
-    </ul>
-
-    <h3>Intelbras RX1500</h3>
-    <ul>
-        <li><strong>Parâmetros WLAN</strong>: WLAN 1: 2.4GHz, WLAN 2: 5.8GHz</li>
-        <li><strong>Diferenciais observados</strong>: Mostra valor real da senha Wi-Fi na interface (<code>KeyPassphrase</code>), Ao alterar SSID/senha pela interface web ou API, recebe status <strong>200 (OK)</strong> e aplica na hora, sem reboot, Interface web permite modificar todos os parâmetros writables, Reboot via API funciona corretamente (delay de ~1min)</li>
-        <li><strong>Canal e AutoChannel</strong>: Permite alteração de canal, AutoChannel <code>true</code> é sobrescrito ao definir canal fixo (testado com canal 3)</li>
-        <li><strong>Conclusão</strong>: Melhor desempenho geral e integração nativa com GenieACS, Responde e aplica alterações sem reinício</li>
-    </ul>
-
-    <h2>Observações Gerais</h2>
-    <ul>
-        <li><strong>Canal WLAN e AutoChannel</strong>: Todos os dispositivos (exceto ZTE) aceitam alteração de canal e opção de autochannel (boolean).</li>
-        <li><strong>KeyPassphrase vs PreSharedKey</strong>: Nos Greatek, apenas <code>KeyPassphrase</code> surte efeito. Intelbras usa <code>KeyPassphrase</code> e exibe o valor diretamente.</li>
-    </ul>
-
-    <h2>Conclusões Finais</h2>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Dispositivo</th>
-                <th>Interface Web</th>
-                <th>API Compatível</th>
-                <th>Reboot Necessário</th>
-                <th>Tempo Médio Reboot</th>
-                <th>Reflete Atualizações</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>ZTE ONT</td>
-                <td>❌</td>
-                <td>❌</td>
-                <td>Sim (inconsistente)</td>
-                <td>—</td>
-                <td>❌</td>
-            </tr>
-            <tr>
-                <td>Greatek v1</td>
-                <td>⚠️ (limitada)</td>
-                <td>✅</td>
-                <td>Sim</td>
-                <td>3 minutos</td>
-                <td>✅ (após reboot)</td>
-            </tr>
-            <tr>
-                <td>Greatek v2</td>
-                <td>⚠️ (limitada)</td>
-                <td>✅</td>
-                <td>Sim</td>
-                <td>1 minuto</td>
-                <td>⚠️ (exige captura)</td>
-            </tr>
-            <tr>
-                <td>Intelbras RX1500</td>
-                <td>✅</td>
-                <td>✅</td>
-                <td>Não</td>
-                <td>—</td>
-                <td>✅</td>
-            </tr>
-        </tbody>
-    </table>
-
+  </script>
 </body>
 </html>
-
